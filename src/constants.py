@@ -42,4 +42,5 @@ LLM_MODEL_NAME = "gpt-4-0125-preview"
 USER = db_secrets["username"]
 PASSWORD = db_secrets["password"]
 HOST = db_secrets["host"]
-DATABASE = db_secrets["port"]
+DATABASE = "ecommerce"
+PORT = db_secrets["port"]
