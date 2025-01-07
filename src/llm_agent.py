@@ -45,7 +45,7 @@ PASSWORD = urllib.parse.quote_plus(PASSWORD)
 print("-------------")
 print(f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
 print("-------------")
-db = SQLDatabase.from_uri(f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
+db = SQLDatabase.from_uri(f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?connect_timeout=120")
 
 def get_chat_openai(model_name):
     """
@@ -146,7 +146,7 @@ def initialize_sql_agent(tool_llm_name: str = LLM_MODEL_NAME, agent_llm_name: st
     toolkit = get_sql_toolkit(tool_llm_name)
     message_history = SQLChatMessageHistory(
         session_id="my-session",
-        connection_string=f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}",
+        connection_string=f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?connect_timeout=120",
         table_name="message_store",
         session_id_field_name="session_id"
     )
