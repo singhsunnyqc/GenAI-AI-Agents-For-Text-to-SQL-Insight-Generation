@@ -38,7 +38,7 @@ Parameters:
       - 1024
       - 2048
       - 4096
-  
+
   Memory:
     Description: "Memory of Fargate Task.  Make sure you put valid Memory and CPU pair, refer: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html#cfn-ecs-taskdefinition-cpu:~:text=requires%3A%20Replacement-,Cpu,-The%20number%20of"
     Type: Number
@@ -59,7 +59,7 @@ Parameters:
   GitURL:
     Type: String
     Description: Initial repository for basic Hello World application
-    Default: https://github.com/singhsunnyqc/GenAI-Samples-streamlit-deploy.git
+    Default: https://github.com/singhsunnyqc/ai-agents-for-text-to-sql-insight-generation.git
 
   DeployVPCInfrastructure:
     Description: Select false if you already have infrastructure.yaml nested stack deployed in this region
@@ -78,23 +78,23 @@ Parameters:
     Description: Minimum containers for Autoscaling. Should be less than or equal to DesiredTaskCount
     Type: Number
     Default: 2
-  
+
   MaxContainers:
     Description: Maximum containers for Autoscaling. Should be greater than or equal to DesiredTaskCount
     Type: Number
     Default: 5
-  
+
   AutoScalingTargetValue:
     Description: CPU Utilization Target
     Type: Number
     Default: 80
 
 Conditions:
-  IsDeployVPCInfrastructure: !Equals 
+  IsDeployVPCInfrastructure: !Equals
     - !Ref DeployVPCInfrastructure
     - 'true'
-  
-  # NotDeployVPCInfrastructure: !Equals 
+
+  # NotDeployVPCInfrastructure: !Equals
   #   - !Ref DeployVPCInfrastructure
   #   - 'false'
 
@@ -116,7 +116,7 @@ Resources:
     Type: AWS::ECR::Repository
     Properties:
       EmptyOnDelete: true
-      ImageScanningConfiguration: 
+      ImageScanningConfiguration:
         ScanOnPush: true
 
   #############################
@@ -131,7 +131,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://s3.amazonaws.com/${StreamlitCodeS3Bucket}/infrastructure.yaml
-  
+
 
   ####################
   ##### Logging #####
@@ -150,8 +150,8 @@ Resources:
               - 'logs:PutLogEvents'
               - 'logs:PutRetentionPolicy'
             Resource: '*'
-  
-  LoggingBucket: 
+
+  LoggingBucket:
     Type: "AWS::S3::Bucket"
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
@@ -170,7 +170,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-              
+
   LoggingBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     DeletionPolicy: Retain
@@ -185,21 +185,21 @@ Resources:
             Effect: Allow
             Principal:
               Service: logging.s3.amazonaws.com
-            Resource: 
+            Resource:
               - !Sub arn:aws:s3:::${LoggingBucket}/*
           - Action:
               - 's3:PutObject'
             Effect: Allow
             Principal:
-              AWS: !Sub 
+              AWS: !Sub
                     - arn:aws:iam::${ElbAccount}:root
                     - {ElbAccount: !FindInMap [ELBRegionMap, !Ref 'AWS::Region', ELBAccountId]}
-            Resource: 
+            Resource:
               - !Sub arn:aws:s3:::${LoggingBucket}/alb/logs/AWSLogs/${AWS::AccountId}/*
           - Action:
               - 's3:*'
             Effect: Deny
-            Resource: 
+            Resource:
               - !Sub arn:aws:s3:::${LoggingBucket}/*
               - !Sub arn:aws:s3:::${LoggingBucket}
             Principal: "*"
@@ -248,7 +248,7 @@ Resources:
             Condition:
               Bool:
                 aws:SecureTransport: 'false'
-  
+
   # CodeBucket
   StreamlitCodeS3Bucket:
     Type: AWS::S3::Bucket
@@ -267,7 +267,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-              
+
   StreamlitCodeS3BucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
     Properties:
@@ -278,14 +278,14 @@ Resources:
           - Action:
               - 's3:*'
             Effect: Deny
-            Resource: 
+            Resource:
               - !Sub arn:aws:s3:::${StreamlitCodeS3Bucket}/*
               - !Sub arn:aws:s3:::${StreamlitCodeS3Bucket}
             Principal: "*"
             Condition:
               Bool:
                 'aws:SecureTransport': 'false'
-  
+
   # CloudTrail Bucket
   StreamlitCloudTrailBucket:
     Type: AWS::S3::Bucket
@@ -302,7 +302,7 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-              
+
   StreamlitCloudTrailBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -326,21 +326,21 @@ Resources:
                 - cloudtrail.amazonaws.com
             Action: s3:PutObject
             Resource: !Join [ '', [ !GetAtt StreamlitCloudTrailBucket.Arn, '/AWSLogs/', !Ref 'AWS::AccountId', '/*' ] ]
-            Condition: 
+            Condition:
               StringEquals:
                 s3:x-amz-acl: bucket-owner-full-control
-          - 
+          -
             Action:
               - 's3:*'
             Effect: Deny
-            Resource: 
+            Resource:
               - !Sub arn:aws:s3:::${StreamlitCloudTrailBucket}/*
               - !Sub arn:aws:s3:::${StreamlitCloudTrailBucket}
             Principal: "*"
             Condition:
               Bool:
                 'aws:SecureTransport': 'false'
-                
+
   StreamlitCloudTrail:
     DependsOn:
       - StreamlitCloudTrailBucketPolicy
@@ -404,7 +404,7 @@ Resources:
                   - "s3:PutObject"
                 Resource:
                   - !Sub "arn:aws:s3:::${StreamlitArtifactStore}/*"
-  
+
   StreamlitCodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -447,7 +447,7 @@ Resources:
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
                   - cloudformation:CreateStack
-                Resource: !Sub 
+                Resource: !Sub
                           - |-
                             arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}/*
                           - {
@@ -462,7 +462,7 @@ Resources:
                   - !Sub arn:aws:s3:::${StreamlitCodeS3Bucket}
                   - !Sub arn:aws:s3:::${StreamlitArtifactStore}/*
                   - !Sub arn:aws:s3:::${StreamlitArtifactStore}
-  
+
   StreamlitCloudformationExecutionRole:
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
@@ -508,10 +508,10 @@ Resources:
                   - 's3:GetBucketAcl'
                   - 's3:PutBucketAcl'
                 Resource:
-                  - !Sub 
+                  - !Sub
                       - 'arn:aws:s3:::${LoggingBucket}'
                       - LoggingBucket: !Ref LoggingBucket
-                  - !Sub 
+                  - !Sub
                       - 'arn:aws:s3:::${LoggingBucket}/*'
                       - LoggingBucket: !Ref LoggingBucket
               - Effect: 'Allow'
@@ -521,17 +521,17 @@ Resources:
                 Resource:
                   - '*'
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'ecs:DescribeClusters'
                   - 'ecs:DescribeServices'
                   - 'ecs:CreateService'
                   - 'ecs:UpdateService'
                   - 'ecs:DeleteService'
                 Resource:
-                  - !Sub 
+                  - !Sub
                       - arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${StreamlitClusterName}
                       - StreamlitClusterName: !If [IsDeployVPCInfrastructure, !GetAtt Infrastructure.Outputs.StreamlitCluster, !ImportValue StreamlitCluster]
-                  - !Sub 
+                  - !Sub
                       - arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:service/${StreamlitClusterName}/${AWS::StackName}deploy-StreamlitECSService*
                       - StreamlitClusterName: !If [IsDeployVPCInfrastructure, !GetAtt Infrastructure.Outputs.StreamlitCluster, !ImportValue StreamlitCluster]
               # - Effect: 'Allow'
@@ -567,10 +567,10 @@ Resources:
                   - 'application-autoscaling:DescribeScalingPolicies'
                   - 'application-autoscaling:RegisterScalableTarget'
                   - 'application-autoscaling:DeregisterScalableTarget'
-                Resource: 
+                Resource:
                   - !Sub arn:aws:application-autoscaling:${AWS::Region}:${AWS::AccountId}:scalable-target/*
               - Effect: 'Allow'
-                Action:              
+                Action:
                   - 'application-autoscaling:PutScalingPolicy'
                   - 'application-autoscaling:DeleteScalingPolicy'
                 Resource:
@@ -587,14 +587,14 @@ Resources:
                 Resource:
                   - '*'
               # - Effect: 'Allow'
-              #   Action:                  
+              #   Action:
               #     - 'wafv2:GetWebACL'
               #     - 'wafv2:DeleteWebACL'
               #     - 'wafv2:ListTagsForResource'
               #   Resource:
-              #     - !Sub arn:aws:wafv2:${AWS::Region}:${AWS::AccountId}:*/webacl/CloudFrontWebACL${EnvironmentName}/*     
+              #     - !Sub arn:aws:wafv2:${AWS::Region}:${AWS::AccountId}:*/webacl/CloudFrontWebACL${EnvironmentName}/*
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'ec2:CreateSecurityGroup'
                   - 'ec2:DescribeSecurityGroups'
                   - 'ec2:CreateTags'
@@ -605,7 +605,7 @@ Resources:
                 Resource:
                   - "*"
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'ec2:DeleteSecurityGroup'
                   - 'ec2:RevokeSecurityGroupIngress'
                   - 'ec2:RevokeSecurityGroupEgress'
@@ -617,7 +617,7 @@ Resources:
                   StringEquals:
                     'aws:ResourceTag/Name': !Join ['', ['StreamlitALBSecurityGroup', !Sub "${AWS::StackName}deploy"]]
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'ec2:DeleteSecurityGroup'
                   - 'ec2:RevokeSecurityGroupIngress'
                   - 'ec2:RevokeSecurityGroupEgress'
@@ -625,42 +625,42 @@ Resources:
                   - 'ec2:AuthorizeSecurityGroupEgress'
                 Resource:
                   - "*"
-                Condition:                 
+                Condition:
                   StringEquals:
                     'aws:ResourceTag/Name': !Join ['', ['StreamlitContainerSecurityGroup', !Sub "${AWS::StackName}deploy"]]
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'elasticloadbalancing:DeleteLoadBalancer'
                   - 'elasticloadbalancing:DeleteListener'
                   - 'elasticloadbalancing:DeleteRule'
                   - 'elasticloadbalancing:DeleteTargetGroup'
                 Resource:
-                  - !Sub 
-                      - 
+                  - !Sub
+                      -
                         arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:targetgroup/${UniqueId}/*
                       - {
                           UniqueId: !Select [0, !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId]]]]
                         }
-                  - !Sub 
-                      - 
+                  - !Sub
+                      -
                         arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:loadbalancer/app/${UniqueId}/*
                       - {
                           UniqueId: !Select [0, !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId]]]]
                         }
-                  - !Sub 
-                      - 
+                  - !Sub
+                      -
                         arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener/app/${UniqueId}/*/*
                       - {
                           UniqueId: !Select [0, !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId]]]]
                         }
-                  - !Sub 
-                      - 
+                  - !Sub
+                      -
                         arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener-rule/app/${UniqueId}/*/*/*
                       - {
                           UniqueId: !Select [0, !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId]]]]
                         }
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'elasticloadbalancing:CreateLoadBalancer'
                   - 'elasticloadbalancing:CreateListener'
                   - 'elasticloadbalancing:CreateRule'
@@ -675,7 +675,7 @@ Resources:
                 Resource:
                   - "*"
               - Effect: 'Allow'
-                Action:                  
+                Action:
                   - 'iam:CreateServiceLinkedRole'
                   - 'iam:AttachRolePolicy'
                   - 'iam:PutRolePolicy'
@@ -697,11 +697,11 @@ Resources:
           - LOCAL_SOURCE_CACHE
           - LOCAL_DOCKER_LAYER_CACHE
         Type: LOCAL
-      Artifacts: 
+      Artifacts:
         Type: CODEPIPELINE
       Source:
         Type: CODEPIPELINE
-        BuildSpec: 
+        BuildSpec:
           !Sub
             - |
               version: 0.2
@@ -726,7 +726,7 @@ Resources:
               artifacts:
                 files:
                   - imageDetail.json
-            - { 
+            - {
                 StreamlitImageRepo: !Ref StreamlitImageRepo
               }
       Environment:
@@ -735,7 +735,7 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
       ServiceRole: !GetAtt StreamlitCodeBuildExecutionRole.Arn
       TimeoutInMinutes: 10
-  
+
   StreamlitCodeBuildLogGroup:
     Type: AWS::Logs::LogGroup
     UpdateReplacePolicy: Retain
@@ -779,7 +779,7 @@ Resources:
                   - s3:GetObject
                   - s3:GetObjectAcl
                   - s3:ListBucket
-                Resource: 
+                Resource:
                   - !Sub "arn:aws:s3:::${StreamlitArtifactStore}/*"
 
   InvalidateCacheFunction:
@@ -852,16 +852,16 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     DependsOn: StreamlitBuildCustomResource
     Properties:
-      ArtifactStore: 
+      ArtifactStore:
         Location: !Ref StreamlitArtifactStore
         Type: S3
       RestartExecutionOnUpdate: False
       RoleArn: !GetAtt StreamlitCodePipelineServiceRole.Arn
       Stages:
         - Name: Source
-          Actions: 
+          Actions:
           - Name: SourceAction
-            ActionTypeId: 
+            ActionTypeId:
               Category: Source
               Owner: AWS
               Provider: S3
@@ -908,10 +908,10 @@ Resources:
               OutputFileName: CreateStackOutput.json
               ActionMode: CREATE_UPDATE
               Capabilities: CAPABILITY_NAMED_IAM
-              ParameterOverrides: !Sub 
+              ParameterOverrides: !Sub
                   - | 
                     {"StreamLitImageURI" : { "Fn::GetParam" : ["build-output-artifacts", "imageDetail.json", "StreamLitImageURI"] },"StreamlitCluster": "${Cluster}", "Cpu": "${Cpu}", "Memory":"${Memory}","Task":"${DesiredTaskCount}","Min":"${MinContainers}","Max":"${MaxContainers}","AutoScalingTargetValue":"${AutoScalingTargetValue}","StreamlitPublicSubnetA": "${PubSubnetA}","StreamlitPublicSubnetB": "${PubSubnetB}","StreamlitPrivateSubnetA": "${PvtSubnetA}","StreamlitPrivateSubnetB": "${PvtSubnetB}","UniqueId": "${UniqueId}", "LoggingBucketName": "${LoggingBucketName}","StreamlitVPC": "${VPC}"},
-                  - {  
+                  - {
                       Cluster: !If [IsDeployVPCInfrastructure, !GetAtt Infrastructure.Outputs.StreamlitCluster, !ImportValue StreamlitCluster],
                       PubSubnetA: !If [IsDeployVPCInfrastructure, !GetAtt Infrastructure.Outputs.PublicSubnetA, !ImportValue Basic-PublicSubnetA],
                       PubSubnetB: !If [IsDeployVPCInfrastructure, !GetAtt Infrastructure.Outputs.PublicSubnetB, !ImportValue Basic-PublicSubnetB],
@@ -921,7 +921,7 @@ Resources:
                       UniqueId: !Select [0, !Split ["-", !Select [2, !Split ["/", !Ref AWS::StackId]]]],
                       VPC: !If [IsDeployVPCInfrastructure, !GetAtt Infrastructure.Outputs.VPC, !ImportValue Basic-VPC]
                    }
-              RoleArn: 
+              RoleArn:
                 !GetAtt StreamlitCloudformationExecutionRole.Arn
               StackName: !Join ['', [!Sub '${AWS::StackName}', 'deploy']]
               TemplatePath: source-output-artifacts::cfn_stack/pipeline/deploy.yaml
@@ -940,7 +940,7 @@ Resources:
               FunctionName: !Ref InvalidateCacheFunction
             RunOrder: 1
 
-  
+
   ########################
   ##### CloudWatch ######
   ######################
@@ -968,7 +968,7 @@ Resources:
                 Effect: Allow
                 Action: codepipeline:StartPipelineExecution
                 Resource: !Join [ '', [ 'arn:aws:codepipeline:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':', !Ref StreamlitCodePipeLine] ]
-  
+
   AmazonCloudWatchEventRule:
     Type: AWS::Events::Rule
     Properties:
@@ -1034,7 +1034,7 @@ Resources:
       Source:
         Type: GITHUB
         Location: !Ref GitURL
-        BuildSpec: 
+        BuildSpec:
           !Sub
             - |
               version: 0.2
@@ -1051,7 +1051,7 @@ Resources:
                   commands:
                     - echo Build completed on `date`
                     - aws s3 cp app.zip s3://${StreamlitCodeS3Bucket}
-            - { 
+            - {
                 StreamlitCodeS3Bucket: !Ref StreamlitCodeS3Bucket
               }
       # SourceVersion: branch
@@ -1062,8 +1062,8 @@ Resources:
       ServiceRole: !GetAtt StreamlitInitBuildRole.Arn
       Artifacts:
         Type: NO_ARTIFACTS
-  
-  
+
+
   ###################################
   ##### Start Docker CodeBuild #####
   #################################
@@ -1108,7 +1108,7 @@ Resources:
                 Resource:
                   - !Sub arn:aws:s3:::${StreamlitCodeS3Bucket}/*
                   - !Sub arn:aws:s3:::${StreamlitCodeS3Bucket}
-                    
+
   StreamlitBuildCustomResourceFunction:
     Type: "AWS::Lambda::Function"
     Properties:
@@ -1251,11 +1251,11 @@ Resources:
                     cfnresponse.send(event, context, cfnresponse.FAILED, {})
                   else:
                     cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
-  
+
   StreamlitECSRoleCustomResource:
     Type: Custom::ECSRole
     Properties:
-      ServiceToken: !GetAtt StreamlitECSRoleCustomResourceFunction.Arn 
+      ServiceToken: !GetAtt StreamlitECSRoleCustomResourceFunction.Arn
 
   ####################
   ##### CleanUp #####
@@ -1308,7 +1308,7 @@ Resources:
       Timeout: 300
       Runtime: python3.12
       Code:
-        ZipFile: !Sub 
+        ZipFile: !Sub
               - |
                 import boto3
                 from time import sleep
@@ -1349,7 +1349,7 @@ Resources:
               - {
                   StackName: !Join ['', [!Sub '${AWS::StackName}', 'deploy']]
                 }
-  
+
   StreamlitCleanCustomResource:
     Type: Custom::BuildCode
     Properties:
