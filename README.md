@@ -1,5 +1,16 @@
 <meta name="image" property="og:image" content="https://github.com/aws-samples/streamlit-deploy/raw/main/architecture-cicd.png">
 
+### This application leverages Generative AI (GenAI) and multiple AI agents to deliver a seamless pipeline for text-to-SQL conversion, data visualization, and actionable insights generation. By combining advanced natural language processing with automated query generation and graphical representation, the app empowers users to interact with data intuitively and efficiently.
+
+## Demo Video
+
+
+https://github.com/user-attachments/assets/af488f75-cc59-4cde-baa7-642248937770
+
+
+
+
+
 # Deploy Streamlit App on ECS
 
 ## Description
