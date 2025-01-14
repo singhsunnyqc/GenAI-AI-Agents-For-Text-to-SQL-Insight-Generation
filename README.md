@@ -1,6 +1,7 @@
-<meta name="image" property="og:image" content="https://github.com/aws-samples/streamlit-deploy/raw/main/architecture-cicd.png">
+# Insight Generation Using AI Agents
 
-### This application leverages Generative AI (GenAI) and multiple AI agents to deliver a seamless pipeline for text-to-SQL conversion, data visualization, and actionable insights generation. By combining advanced natural language processing with automated query generation and graphical representation, the app empowers users to interact with data intuitively and efficiently.
+## Description
+This application leverages Generative AI (GenAI) and multiple AI agents to deliver a seamless pipeline for text-to-SQL conversion, data visualization, and actionable insights generation. By combining advanced natural language processing with automated query generation and graphical representation, the app empowers users to interact with data intuitively and efficiently.
 
 ## Demo Video
 
@@ -8,22 +9,17 @@
 https://github.com/user-attachments/assets/af488f75-cc59-4cde-baa7-642248937770
 
 
+## CICD - Deploy on ECS
 
+### Description
 
+Deployed on AWS by leveraging AWS CloudFormation and a robust Continuous Integration/Continuous Deployment (CI/CD) pipeline. By combining the power of infrastructure as code and automated deployment workflows, developers can effortlessly host and update their Streamlit apps, ensuring a seamless and efficient user experience.
 
-# Deploy Streamlit App on ECS
-
-## Description
-
-This project is dedicated to providing an all-encompassing solution for hosting Streamlit applications on AWS by leveraging AWS CloudFormation and a robust Continuous Integration/Continuous Deployment (CI/CD) pipeline. By combining the power of infrastructure as code and automated deployment workflows, developers can effortlessly host and update their Streamlit apps, ensuring a seamless and efficient user experience.  
-
-This repository provides base code for Streamlit application's and is not production ready. It is your responsibility as a developer to test and vet the application according to your security guidlines.
-
-## Prerequisite
+### Prerequisite
 
 An AWS Account, to deploy the infrastructure. You can find more instructions to create your account [here](https://aws.amazon.com/free).
 
-## Table of contents
+### Table of contents
 
 You can choose to deploy your Streamlit web application using two different deployment options. The first option provides a CI/CD (Continuous Integration/Continuous Deployment) pipeline, which is great for development and production environments. The second option provides a quick setup for Proof of Concept (PoC) purposes.
 
