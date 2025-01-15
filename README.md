@@ -6,7 +6,10 @@ This application leverages Generative AI (GenAI) and multiple AI agents to deliv
 ## Demo Video
 
 
-https://github.com/user-attachments/assets/af488f75-cc59-4cde-baa7-642248937770
+https://github.com/user-attachments/assets/4bc77f09-ecea-49ff-8652-bd851480d3dd
+
+
+
 
 
 ## CICD - Deploy on ECS
