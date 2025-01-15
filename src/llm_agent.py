@@ -42,9 +42,6 @@ chat_openai_model_kwargs = {
     "presence_penalty": -1,
 }
 PASSWORD = urllib.parse.quote_plus(PASSWORD)
-print("-------------")
-print(f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
-print("-------------")
 db = SQLDatabase.from_uri(f"mysql+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}?connect_timeout=120")
 
 def get_chat_openai(model_name):
